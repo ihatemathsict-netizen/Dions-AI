@@ -116,9 +116,11 @@ console.log("🤖 OpenRouter response:", data);
         }
 
 
-        res.json({
-            reply: aiReply
-        });
+        console.log("✅ Sending reply:", aiReply);
+
+res.json({
+    reply: aiReply
+});
 
 
     } catch (error) {
