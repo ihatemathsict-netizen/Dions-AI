@@ -653,25 +653,19 @@ try{
 
 
 let response = await fetch(
-"https://dions-ai.onrender.com/chat",,
-{
+    "https://dions-ai.onrender.com/chat",
+    {
+        method: "POST",
 
-method:"POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-message:message
-
-})
-
-}
-
+        body: JSON.stringify({
+            message: message
+        })
+    }
 );
-
 
 
 let data=await response.json();
