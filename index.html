@@ -247,49 +247,29 @@ background-clip:padding-box;
 .message{
 
 max-width:75%;
-
 padding:22px 28px;
-
 margin-bottom:20px;
 
 border-radius:25px;
 
 font-size:18px;
-
 line-height:1.6;
 
-animation:
-messageIn .35s ease;
+animation:.45s messageIn ease;
 
 }
-
 
 
 @keyframes messageIn{
 
 from{
-
 opacity:0;
-
-transform:
-translateY(25px)
-scale(.95);
-
-filter:blur(5px);
-
+transform:translateY(20px);
 }
 
-
 to{
-
 opacity:1;
-
-transform:
-translateY(0)
-scale(1);
-
-filter:blur(0);
-
+transform:translateY(0);
 }
 
 }
@@ -307,6 +287,8 @@ linear-gradient(
 
 border-bottom-left-radius:5px;
 
+animation:aiSlide .45s ease;
+
 }
 
 
@@ -323,6 +305,116 @@ linear-gradient(
 );
 
 border-bottom-right-radius:5px;
+
+animation:userSlide .45s ease;
+
+}
+
+
+
+@keyframes aiSlide{
+
+from{
+
+opacity:0;
+transform:translateX(-40px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateX(0);
+
+}
+
+}
+
+
+
+@keyframes userSlide{
+
+from{
+
+opacity:0;
+transform:translateX(40px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateX(0);
+
+}
+
+}
+
+
+
+/* THINKING ANIMATION */
+
+.thinking{
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+}
+
+
+
+.dot{
+
+width:8px;
+
+height:8px;
+
+background:white;
+
+border-radius:50%;
+
+animation:bounce 1.2s infinite;
+
+}
+
+
+
+.dot:nth-child(2){
+
+animation-delay:.2s;
+
+}
+
+
+.dot:nth-child(3){
+
+animation-delay:.4s;
+
+}
+
+
+
+@keyframes bounce{
+
+0%,100%{
+
+transform:translateY(0);
+
+opacity:.4;
+
+}
+
+
+50%{
+
+transform:translateY(-8px);
+
+opacity:1;
+
+}
 
 }
 
@@ -642,30 +734,46 @@ input.value="";
 
 
 
-let loading=addMessage(
-"Dion's AI is thinking...",
-"ai"
-);
+let loading=document.createElement("div");
 
+loading.className="message ai thinking";
+
+loading.innerHTML=
+`
+Dion's AI is thinking
+<div class="dot"></div>
+<div class="dot"></div>
+<div class="dot"></div>
+`;
+
+chat.appendChild(loading);
+
+chat.scrollTop=chat.scrollHeight;
 
 
 try{
 
 
 let response = await fetch(
-    "https://dions-ai.onrender.com/chat",
-    {
-        method: "POST",
+"https://dions-ai.onrender.com/chat",
+{
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+method:"POST",
 
-        body: JSON.stringify({
-            message: message
-        })
-    }
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+message:message
+
+})
+
+}
+
 );
+
 
 
 let data=await response.json();
@@ -674,11 +782,10 @@ let data=await response.json();
 loading.remove();
 
 
-addMessage(
+typeMessage(
 data.reply,
 "ai"
 );
-
 
 }
 
