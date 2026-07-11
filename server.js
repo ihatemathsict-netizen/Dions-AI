@@ -22,7 +22,7 @@ app.post("/chat", async (req, res) => {
 
         const message = req.body.message;
 
-        if (!message) {
+        if (!message || message.trim() === "") {
             return res.json({
                 reply: "Please enter a message."
             });
@@ -43,19 +43,42 @@ app.post("/chat", async (req, res) => {
 
                 body: JSON.stringify({
 
-                    // OpenRouter automatically chooses an available free model
                     model: "openrouter/free",
 
+                    temperature: 0.7,
+
                     messages: [
+
                         {
                             role: "system",
-                            content:
-                            "You are Dion's AI, a helpful, friendly and professional AI assistant created by Dion Daniel Lobo Enterprises."
+                            content: `
+You are Dion's AI, a modern intelligent assistant created by Dion Daniel Lobo Enterprises.
+
+Your personality:
+- Friendly, professional, and natural.
+- Speak like a helpful human assistant.
+- Be clear and easy to understand.
+- Avoid robotic answers.
+
+Answer rules:
+- Give direct answers first.
+- Explain step-by-step when needed.
+- Use bullet points for lists.
+- Use examples when they help.
+- For programming questions, provide clean code and explain it.
+- For school questions, teach instead of just giving answers.
+- If information is uncertain, say that you are unsure.
+- Do not make up fake facts.
+
+Your goal is to be useful, accurate, and pleasant to talk with.
+`
                         },
+
                         {
                             role: "user",
                             content: message
                         }
+
                     ]
 
                 })
@@ -68,32 +91,44 @@ app.post("/chat", async (req, res) => {
 
         if (!response.ok) {
 
-            console.log(data);
+            console.log("OpenRouter Error:", data);
 
             return res.status(500).json({
-                reply: "⚠️ AI provider error. Try again shortly."
+                reply: "⚠️ Dion's AI is temporarily busy. Please try again."
+            });
+
+        }
+
+
+        const aiReply =
+            data?.choices?.[0]?.message?.content;
+
+
+        if (!aiReply) {
+
+            return res.json({
+                reply: "⚠️ I couldn't generate a response. Please try again."
             });
 
         }
 
 
         res.json({
-            reply: data.choices[0].message.content
+            reply: aiReply
         });
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error("Server Error:", error);
 
         res.status(500).json({
-            reply: "⚠️ Dion's AI server error."
+            reply: "⚠️ Dion's AI server encountered an error."
         });
 
     }
 
 });
-
 
 
 const PORT = process.env.PORT || 3000;
