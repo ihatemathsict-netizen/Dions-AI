@@ -12,40 +12,41 @@ app.use(express.json());
 // Serve website files
 app.use(express.static(path.join(__dirname)));
 
+
 // Homepage
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"));
 });
 
 
-// Chat endpoint
+// AI Chat Endpoint
 app.post("/chat", async (req, res) => {
 
     try {
 
         const message = req.body.message;
 
+
         if (!message) {
             return res.json({
-                reply: "Please enter a message."
+                reply: "Please type a message."
             });
         }
 
 
-        // Free AI models (tries them in order)
         const models = [
-            "google/gemma-3-4b-it:free",
-            "qwen/qwen3-4b:free",
-            "meta-llama/llama-3.2-3b-instruct:free"
+            "meta-llama/llama-3.1-8b-instruct:free",
+            "mistralai/mistral-7b-instruct:free",
+            "openchat/openchat-7b:free"
         ];
 
 
-        let result = null;
+        let answer = null;
 
 
         for (const model of models) {
 
-            console.log("Trying model:", model);
+            console.log("Trying:", model);
 
 
             const response = await fetch(
@@ -73,6 +74,7 @@ app.post("/chat", async (req, res) => {
                                 "You are Dion's AI, a helpful, friendly, and professional AI assistant created by Dion Daniel Lobo Enterprises."
                             },
 
+
                             {
                                 role: "user",
                                 content: message
@@ -88,9 +90,9 @@ app.post("/chat", async (req, res) => {
 
             if (response.ok) {
 
-                result = await response.json();
+                answer = await response.json();
 
-                console.log("Using model:", model);
+                console.log("Working model:", model);
 
                 break;
 
@@ -107,12 +109,12 @@ app.post("/chat", async (req, res) => {
 
 
 
-        if (!result) {
+        if (!answer) {
 
             return res.status(503).json({
 
                 reply:
-                "⚠️ AI servers are currently busy. Please try again in a few seconds."
+                "⚠️ AI servers are busy right now. Please try again shortly."
 
             });
 
@@ -123,7 +125,7 @@ app.post("/chat", async (req, res) => {
         res.json({
 
             reply:
-            result.choices[0].message.content
+            answer.choices[0].message.content
 
         });
 
@@ -142,13 +144,13 @@ app.post("/chat", async (req, res) => {
 
         });
 
-
     }
 
 });
 
 
 
+// Start Server
 const PORT = process.env.PORT || 3000;
 
 
