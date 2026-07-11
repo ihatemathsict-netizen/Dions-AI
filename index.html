@@ -793,17 +793,14 @@ data.reply,
 
 catch(error){
 
-
 loading.remove();
 
-
 addMessage(
-"⚠️ Cannot connect to Dion's AI server.",
+"ERROR: " + error.message,
 "ai"
 );
 
-
-console.log(error);
+console.log("Frontend error:", error);
 
 }
 
