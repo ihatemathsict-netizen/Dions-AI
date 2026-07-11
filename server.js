@@ -90,6 +90,7 @@ Your goal is to be useful, accurate, and pleasant to talk with.
 
         const data = await response.json();
 
+console.log("🤖 OpenRouter response:", data);
 
         if (!response.ok) {
 
