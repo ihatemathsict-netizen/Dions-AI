@@ -22,6 +22,8 @@ app.post("/chat", async (req, res) => {
 
         const message = req.body.message;
 
+console.log("📩 User message:", message);
+
         if (!message || message.trim() === "") {
             return res.json({
                 reply: "Please enter a message."
