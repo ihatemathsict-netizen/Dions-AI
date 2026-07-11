@@ -6,50 +6,56 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+    res.send("✅ Dion's AI Server is Online");
+});
+
 app.post("/chat", async (req, res) => {
-
     try {
-
         const message = req.body.message;
 
         const response = await fetch(
-            "http://localhost:11434/api/generate",
+            "https://openrouter.ai/api/v1/chat/completions",
             {
                 method: "POST",
                 headers: {
+                    "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    model: "llama3.2:3b",
-                    prompt: message,
-                    stream: false
+                    model: "meta-llama/llama-3.2-3b-instruct:free",
+                    messages: [
+                        {
+                            role: "user",
+                            content: message
+                        }
+                    ]
                 })
             }
         );
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText);
+        }
 
         const data = await response.json();
 
-        console.log("AI:", data.response);
-
         res.json({
-            reply: data.response
+            reply: data.choices[0].message.content
         });
 
-
-    } catch(error) {
-
-        console.log(error);
+    } catch (error) {
+        console.error(error);
 
         res.status(500).json({
-            reply: "AI server error"
+            reply: "⚠️ AI Server Error"
         });
-
     }
-
 });
 
+const PORT = process.env.PORT || 3000;
 
-app.listen(3000, () => {
-    console.log("Dion's AI server running on port 3000");
+app.listen(PORT, () => {
+    console.log(`Dion's AI server running on port ${PORT}`);
 });
