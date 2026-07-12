@@ -673,32 +673,53 @@ Send
 <script>
 
 
-const chat=document.getElementById("chat");
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send");
 
-const input=document.getElementById("input");
+let thinking = false;
 
-const sendBtn=document.getElementById("send");
+function addMessage(text, type) {
 
+    let msg = document.createElement("div");
 
-let thinking=false;
+    msg.className = "message " + type;
 
+    msg.innerText = text;
 
+    chat.appendChild(msg);
 
-function addMessage(text,type){
+    chat.scrollTop = chat.scrollHeight;
 
+    return msg;
 
-let msg=document.createElement("div");
+}
 
-msg.className="message "+type;
+function typeMessage(text, type) {
 
-msg.innerText=text;
+    let msg = document.createElement("div");
 
-chat.appendChild(msg);
+    msg.className = "message " + type;
 
-chat.scrollTop=chat.scrollHeight;
+    chat.appendChild(msg);
 
+    let i = 0;
 
-return msg;
+    let interval = setInterval(() => {
+
+        msg.innerText += text.charAt(i);
+
+        chat.scrollTop = chat.scrollHeight;
+
+        i++;
+
+        if (i >= text.length) {
+
+            clearInterval(interval);
+
+        }
+
+    }, 15);
 
 }
 
