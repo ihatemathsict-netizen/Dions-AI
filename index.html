@@ -703,27 +703,27 @@ function typeMessage(text, type) {
 
     chat.appendChild(msg);
 
+    const words = text.split(" ");
+
     let i = 0;
 
     let interval = setInterval(() => {
 
-        msg.innerText += text.charAt(i);
+        msg.textContent += (i === 0 ? "" : " ") + words[i];
 
         chat.scrollTop = chat.scrollHeight;
 
         i++;
 
-        if (i >= text.length) {
+        if (i >= words.length) {
 
             clearInterval(interval);
 
         }
 
-    }, 15);
+    }, 45);
 
 }
-
-
 
 
 async function send(){
