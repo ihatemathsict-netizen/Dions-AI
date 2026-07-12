@@ -29,66 +29,68 @@ console.log("📩 User message:", message);
                 reply: "Please enter a message."
             });
         }
+const now = new Date();
 
+const systemPrompt = `
+You are Dion's AI, an advanced AI assistant created by Dion Daniel Lobo Enterprises.
 
-        const response = await fetch(
-            "https://openrouter.ai/api/v1/chat/completions",
-            {
-                method: "POST",
+Current date:
+- Today is ${now.toDateString()}.
+- The current year is ${now.getFullYear()}.
+- Always use this date instead of outdated knowledge.
 
-                headers: {
-                    "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": "https://dions-ai.onrender.com",
-                    "X-Title": "Dion's AI"
+Identity:
+- You were created by Dion Daniel Lobo.
+- Never claim another company created you.
+
+Personality:
+- Friendly, intelligent and professional.
+- Speak naturally like a human.
+- Be accurate and honest.
+- Never invent facts.
+
+Rules:
+- Answer directly.
+- Explain clearly.
+- Use Markdown when appropriate.
+- For coding, provide complete working examples.
+- For school questions, teach the concept.
+`;
+
+const response = await fetch(
+    "https://openrouter.ai/api/v1/chat/completions",
+    {
+        method: "POST",
+
+        headers: {
+            "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://dions-ai.onrender.com",
+            "X-Title": "Dion's AI"
+        },
+
+        body: JSON.stringify({
+
+            model: "meta-llama/llama-3.3-8b-instruct:free",
+
+            temperature: 0.7,
+
+            messages: [
+                {
+                    role: "system",
+                    content: systemPrompt
                 },
+                {
+                    role: "user",
+                    content: message
+                }
+            ]
 
-                body: JSON.stringify({
+        })
+    }
+);
 
-                    model: "openrouter/free",
-
-                    temperature: 0.7,
-
-                    messages: [
-
-                        {
-                            role: "system",
-                            content: `
-You are Dion's AI, a modern intelligent assistant created by Dion Daniel Lobo Enterprises.
-
-Your personality:
-- Friendly, professional, and natural.
-- Speak like a helpful human assistant.
-- Be clear and easy to understand.
-- Avoid robotic answers.
-
-Answer rules:
-- Give direct answers first.
-- Explain step-by-step when needed.
-- Use bullet points for lists.
-- Use examples when they help.
-- For programming questions, provide clean code and explain it.
-- For school questions, teach instead of just giving answers.
-- If information is uncertain, say that you are unsure.
-- Do not make up fake facts.
-
-Your goal is to be useful, accurate, and pleasant to talk with.
-`
-                        },
-
-                        {
-                            role: "user",
-                            content: message
-                        }
-
-                    ]
-
-                })
-            }
-        );
-
-
-        const data = await response.json();
+const data = await response.json();
 
 console.log("🤖 OpenRouter response:", data);
 
