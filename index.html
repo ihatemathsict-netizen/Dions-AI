@@ -674,37 +674,35 @@ function typeMessage(text, type) {
     msg.className = "message " + type;
     chat.appendChild(msg);
 
-    let i = 0;
+    let index = 0;
 
     function type() {
 
-        // Type 1-4 characters at a time
-        const chunk = Math.floor(Math.random() * 4) + 1;
+        if (index >= text.length) return;
 
-        msg.textContent += text.slice(i, i + chunk);
+        // Type 1-3 characters at a time
+        const amount = Math.floor(Math.random() * 3) + 1;
 
-        i += chunk;
+        msg.textContent += text.slice(index, index + amount);
+
+        index += amount;
 
         chat.scrollTop = chat.scrollHeight;
 
-        if (i < text.length) {
+        let delay = 18 + Math.random() * 15;
 
-            let speed = 20;
+        const lastChar = msg.textContent.slice(-1);
 
-            const last = text.charAt(i - 1);
+        if (lastChar === " ") delay = 8;
+        if (lastChar === ",") delay = 110;
+        if (lastChar === ".") delay = 220;
+        if (lastChar === "!") delay = 220;
+        if (lastChar === "?") delay = 220;
+        if (lastChar === "\n") delay = 170;
 
-            if (last === " ") speed = 15;
-            if (last === ",") speed = 120;
-            if (last === ".") speed = 220;
-            if (last === "!") speed = 220;
-            if (last === "?") speed = 220;
-            if (last === "\n") speed = 180;
-
-            speed += Math.random() * 15;
-
-            setTimeout(type, speed);
-
-        }
+        requestAnimationFrame(() => {
+            setTimeout(type, delay);
+        });
 
     }
 
