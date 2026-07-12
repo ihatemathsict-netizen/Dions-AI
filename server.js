@@ -71,7 +71,7 @@ const response = await fetch(
 
         body: JSON.stringify({
 
-            model: "deepseek/deepseek-chat:free",
+            model: "openrouter/free",
 
             temperature: 0.7,
 
