@@ -312,47 +312,23 @@ linear-gradient(
 
 border-bottom-right-radius:5px;
 
-animation:userSlide .45s ease;
+
 
 }
 
 
 
-@keyframes aiSlide{
+@keyframes pop {
 
-from{
+    0% {
+        opacity: 0;
+        transform: translateY(18px) scale(.98);
+    }
 
-opacity:0;
-transform:translateX(-40px);
-
-}
-
-to{
-
-opacity:1;
-transform:translateX(0);
-
-}
-
-}
-
-
-
-@keyframes userSlide{
-
-from{
-
-opacity:0;
-transform:translateX(40px);
-
-}
-
-to{
-
-opacity:1;
-transform:translateX(0);
-
-}
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 
 }
 
@@ -811,12 +787,12 @@ console.log(data);
 loading.remove();
 
 
-addMessage(
-data.reply,
-"ai"
-);
+loading.remove();
 
-}
+typeMessage(
+    data.reply,
+    "ai"
+);
 
 catch(error){
 
