@@ -653,8 +653,6 @@ Send
 
 
 <script>
-
-
 const chat = document.getElementById("chat");
 const input = document.getElementById("input");
 const sendBtn = document.getElementById("send");
@@ -662,183 +660,140 @@ const sendBtn = document.getElementById("send");
 let thinking = false;
 
 function addMessage(text, type) {
-
-    let msg = document.createElement("div");
-
+    const msg = document.createElement("div");
     msg.className = "message " + type;
-
     msg.innerText = text;
-
     chat.appendChild(msg);
-
     chat.scrollTop = chat.scrollHeight;
-
     return msg;
-
 }
 
 function typeMessage(text, type) {
 
-    let msg = document.createElement("div");
-
+    const msg = document.createElement("div");
     msg.className = "message " + type;
-
     chat.appendChild(msg);
-
-    const words = text.split(" ");
 
     let i = 0;
 
-    let interval = setInterval(() => {
+    function type() {
 
-        msg.textContent += (i === 0 ? "" : " ") + words[i];
+        // Type 1-4 characters at a time
+        const chunk = Math.floor(Math.random() * 4) + 1;
+
+        msg.textContent += text.slice(i, i + chunk);
+
+        i += chunk;
 
         chat.scrollTop = chat.scrollHeight;
 
-        i++;
+        if (i < text.length) {
 
-        if (i >= words.length) {
+            let speed = 20;
 
-            clearInterval(interval);
+            const last = text.charAt(i - 1);
+
+            if (last === " ") speed = 15;
+            if (last === ",") speed = 120;
+            if (last === ".") speed = 220;
+            if (last === "!") speed = 220;
+            if (last === "?") speed = 220;
+            if (last === "\n") speed = 180;
+
+            speed += Math.random() * 15;
+
+            setTimeout(type, speed);
 
         }
 
-    }, 45);
+    }
+
+    type();
 
 }
+async function send() {
 
+    if (thinking) return;
 
-async function send(){
+    const message = input.value.trim();
 
+    if (!message) return;
 
-if(thinking)return;
+    thinking = true;
 
+    input.disabled = true;
+    sendBtn.disabled = true;
+    input.placeholder = "Dion's AI is replying...";
 
-let message=input.value.trim();
+    addMessage(message, "user");
 
+    input.value = "";
 
-if(!message)return;
+    const loading = document.createElement("div");
 
+    loading.className = "message ai thinking";
 
-thinking=true;
+    loading.innerHTML = `
+        Dion's AI is thinking
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+    `;
 
+    chat.appendChild(loading);
+    chat.scrollTop = chat.scrollHeight;
 
-input.disabled=true;
+    try {
 
-sendBtn.disabled=true;
+        const response = await fetch("https://dions-ai.onrender.com/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: message
+            })
+        });
 
-input.placeholder="Dion's AI is replying...";
+        const data = await response.json();
 
+        console.log(response.status);
+        console.log(data);
 
-addMessage(message,"user");
+        loading.remove();
 
+        if (!response.ok) {
+            addMessage(data.reply || "Server Error", "ai");
+        } else {
+            typeMessage(data.reply, "ai");
+        }
 
-input.value="";
+    } catch (error) {
 
+        loading.remove();
 
+        addMessage(
+            "⚠️ Cannot connect to Dion's AI server.",
+            "ai"
+        );
 
-let loading=document.createElement("div");
+        console.error(error);
 
-loading.className="message ai thinking";
+    }
 
-loading.innerHTML=
-`
-Dion's AI is thinking
-<div class="dot"></div>
-<div class="dot"></div>
-<div class="dot"></div>
-`;
+    thinking = false;
 
-chat.appendChild(loading);
-
-chat.scrollTop=chat.scrollHeight;
-
-
-try{
-
-
-let response = await fetch(
-"https://dions-ai.onrender.com/chat",
-{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-message:message
-
-})
-
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.placeholder = "Message Dion's AI...";
+    input.focus();
 }
 
-);
-
-
-
-let data=await response.json();
-
-console.log(response.status);
-console.log(data);
-
-loading.remove();
-
-
-loading.remove();
-
-typeMessage(
-    data.reply,
-    "ai"
-);
-
-catch(error){
-
-loading.remove();
-
-addMessage(
-"ERROR: " + error.message,
-"ai"
-);
-
-console.log("Frontend error:", error);
-
-}
-
-
-
-thinking=false;
-
-
-input.disabled=false;
-
-sendBtn.disabled=false;
-
-input.placeholder="Message Dion's AI...";
-
-input.focus();
-
-
-}
-
-
-
-
-input.addEventListener(
-"keydown",
-function(e){
-
-if(e.key==="Enter"){
-
-send();
-
-}
-
+input.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        send();
+    }
 });
-
-
 </script>
 
 
