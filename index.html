@@ -60,25 +60,17 @@ backdrop-filter:blur(25px);
 .header{
 height:84px;
 padding:18px 30px;
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+
 background:rgba(15,23,42,.7);
 backdrop-filter:blur(20px);
+
 border-bottom:1px solid rgba(255,255,255,.08);
 }
 
-display:flex;
-
-align-items:center;
-
-justify-content:space-between;
-
-background:
-linear-gradient(
-135deg,
-#2563eb,
-#9333ea
-);
-
-}
 
 
 
@@ -182,13 +174,19 @@ box-shadow:
 
 .chat{
 
-flex:1;
+    flex:1;
 
-padding:40px;
+    max-width:900px;
 
-overflow-y:auto;
+    width:100%;
 
-scroll-behavior:smooth;
+    margin:0 auto;
+
+    padding:40px 20px;
+
+    overflow-y:auto;
+
+    scroll-behavior:smooth;
 
 }
 
@@ -268,8 +266,9 @@ animation:pop .25s ease;
 box-shadow:
 0 8px 24px rgba(0,0,0,.25);
 
-}
+transition:all .25s ease;
 
+}
 
 @keyframes messageIn{
 
@@ -289,14 +288,13 @@ transform:translateY(0);
 
 .ai{
 
-background:
-linear-gradient(
-135deg,
-#1e293b,
-#334155
-);
+background:#1e293b;
 
-border-bottom-left-radius:5px;
+border:1px solid rgba(255,255,255,.06);
+
+border-radius:18px;
+
+margin-right:auto;
 
 }
 
@@ -306,18 +304,18 @@ border-bottom-left-radius:5px;
 
 margin-left:auto;
 
-background:
-linear-gradient(
+background:linear-gradient(
 135deg,
 #2563eb,
-#3b82f6
+#7c3aed
 );
 
-border-bottom-right-radius:5px;
+color:white;
 
-
+border-radius:18px;
 
 }
+
 
 
 
@@ -409,9 +407,18 @@ opacity:1;
 
 .input-area{
 
-padding:22px 30px;
-background:#020617;
-border-top:1px solid rgba(255,255,255,.08);
+position:sticky;
+bottom:0;
+
+padding:20px;
+
+background:linear-gradient(
+180deg,
+transparent,
+#020617 35%
+);
+
+backdrop-filter:blur(20px);
 
 }
 
@@ -694,6 +701,14 @@ How can I assist you today?
 const chat = document.getElementById("chat");
 const input = document.getElementById("input");
 const sendBtn = document.getElementById("send");
+
+// Auto-grow textarea
+input.addEventListener("input", () => {
+
+    input.style.height = "28px";
+    input.style.height = input.scrollHeight + "px";
+
+});
 
 let thinking = false;
 
